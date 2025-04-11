@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>True Vote - Biometric Verification</title>
+  <style>
+    body {
+      background: linear-gradient(to right, #00a651, #1e3c72);
+      font-family: Arial, sans-serif;
+      color: white;
+      text-align: center;
+      padding: 20px;
+    }
+    .box {
+      background: rgba(0,0,0,0.3);
+      border-radius: 12px;
+      padding: 30px;
+      max-width: 400px;
+      margin: auto;
+      box-shadow: 0 0 20px rgba(0,0,0,0.5);
+    }
+    input {
+      padding: 10px;
+      font-size: 16px;
+      border: none;
+      border-radius: 8px;
+      width: 80%;
+      margin-bottom: 15px;
+    }
+    button {
+      padding: 10px 25px;
+      background-color: #ffdd57;
+      border: none;
+      border-radius: 8px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #ffd000;
+    }
+    #status {
+      margin-top: 10px;
+      font-weight: bold;
+    }
+    #generatedCode {
+      font-size: 24px;
+      font-weight: bold;
+      margin-bottom: 20px;
+      color: #ffdd57;
+    }
+  </style>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js"></script>
+</head>
+<body>
+  <div class="box">
+    <h2>Biometric Verification</h2>
+    <p>A code has been generated. Enter it below:</p>
+    <div id="generatedCode"></div> <!-- Display the generated code -->
+    <input type="text" id="codeInput" placeholder="Enter your code" />
+    <br />
+    <button onclick="location.href='location.html'">Verify</button>
+    <p id="status"></p>
+  </div>
+
+  <script>
+    // Firebase config
+    const firebaseConfig = {
+      apiKey: "AIzaSyA5ia1cFqxamm2exfqb1-pTvGzQFHGKlsQ",
+      authDomain: "johnmunga-2d89b.firebaseapp.com",
+      databaseURL: "https://johnmunga-2d89b-default-rtdb.firebaseio.com",
+      projectId: "johnmunga-2d89b",
+      storageBucket: "johnmunga-2d89b.appspot.com",
+      messagingSenderId: "1036647099803",
+      appId: "1:1036647099803:web:87a204324b19099adc053e"
+    };
+
+    // Initialize Firebase
+    const app = firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
+    // Generate random code
+    const generateCode = () => {
+      return Math.floor(100000 + Math.random() * 900000).toString();
+    };
+
+    const randomCode = generateCode();
+    console.log("Generated Code:", randomCode); // For test — remove in production
+
+    // Display the generated code on the page
+    document.getElementById("generatedCode").innerText = `Your verification code is: ${randomCode}`;
+
+    // Store code in Firebase (could also store as a session variable, but Firebase is more secure)
+    db.ref("biometricCodes/").push({
+      code: randomCode,
+      timestamp: new Date().toISOString()
+    });
+
+    function verifyCode() {
+      const userCode = document.getElementById("codeInput").value.trim();
+      const status = document.getElementById("status");
+
+      if (userCode === randomCode) {
+        status.style.color = "lightgreen";
+        status.innerText = "Verification successful! Redirecting...";
+
+        // Redirect fast
+        setTimeout(() => {
+          window.location.href = "location.html";
+        }, 1000);
+
+        // Save to Firebase in background
+        db.ref("biometric/" + randomCode).set({
+          verified: true,
+          timestamp: new Date().toISOString()
+        });
+
+      } else {
+        status.style.color = "red";
+        status.innerText = "Incorrect code. Please try again.";
+      }
+    }
+  </script>
+</body>
+</html>

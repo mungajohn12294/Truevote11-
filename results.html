@@ -1,0 +1,110 @@
+
+<!DOCTYPE html><html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>True Vote - Results Analysis</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f9f6;
+      padding: 20px;
+    }
+    h1 {
+      color: #01974D;
+      text-align: center;
+    }
+    .results-section {
+      margin: 30px 0;
+      padding: 15px;
+      border-radius: 10px;
+      background-color: #fff;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    .position-title {
+      font-size: 22px;
+      margin-bottom: 10px;
+      color: #333;
+    }
+    .candidate-result {
+      margin-bottom: 8px;
+      padding: 5px;
+      background-color: #e6f5ea;
+      border-radius: 5px;
+    }
+    .percent {
+      color: #01974D;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <h1>Election Results Analysis</h1>
+  <div id="resultsContainer"></div>  <!-- Firebase + Analysis Logic -->  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
+    import { getDatabase, ref, get, child } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-database.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyA5ia1cFqxamm2exfqb1-pTvGzQFHGKlsQ",
+      authDomain: "johnmunga-2d89b.firebaseapp.com",
+      databaseURL: "https://johnmunga-2d89b-default-rtdb.firebaseio.com",
+      projectId: "johnmunga-2d89b",
+      storageBucket: "johnmunga-2d89b.appspot.com",
+      messagingSenderId: "1036647099803",
+      appId: "1:1036647099803:web:87a204324b19099adc053e"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+
+    const positions = ["president", "governor", "senator", "womenrep", "mp", "mca"];
+
+    async function analyzeVotes() {
+      const snapshot = await get(ref(db, 'votes'));
+      const data = snapshot.val();
+      const resultContainer = document.getElementById("resultsContainer");
+
+      if (!data) {
+        resultContainer.innerHTML = "<p>No votes found yet.</p>";
+        return;
+      }
+
+      const totals = {};
+      const voteCount = Object.keys(data).length;
+
+      // Count votes per candidate
+      for (let voter in data) {
+        positions.forEach(pos => {
+          const choice = data[voter][pos];
+          if (!totals[pos]) totals[pos] = {};
+          if (!totals[pos][choice]) totals[pos][choice] = 0;
+          totals[pos][choice]++;
+        });
+      }
+
+      // Display Results
+      positions.forEach(pos => {
+        const section = document.createElement("div");
+        section.className = "results-section";
+
+        const title = document.createElement("div");
+        title.className = "position-title";
+        title.textContent = pos.toUpperCase();
+        section.appendChild(title);
+
+        const candidates = totals[pos];
+        for (let name in candidates) {
+          const percent = ((candidates[name] / voteCount) * 100).toFixed(2);
+          const result = document.createElement("div");
+          result.className = "candidate-result";
+          result.innerHTML = `${name} - ${candidates[name]} votes <span class="percent">(${percent}%)</span>`;
+          section.appendChild(result);
+        }
+
+        resultContainer.appendChild(section);
+      });
+    }
+
+    analyzeVotes();
+  </script></body>
+</html>

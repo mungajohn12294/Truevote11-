@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>True Vote - Candidate Selection</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #eef3f7;
+      padding: 20px;
+    }
+    h2 {
+      background: #01974D;
+      color: white;
+      padding: 10px;
+      border-radius: 10px;
+    }
+    .position {
+      margin-bottom: 40px;
+    }
+    .candidate {
+      background-color: white;
+      padding: 10px;
+      margin-top: 10px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 0 5px rgba(0,0,0,0.1);
+    }
+    .candidate img {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+    }
+    button {
+      background: #01974D;
+      color: white;
+      padding: 10px 20px;
+      font-size: 18px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #016a37;
+    }
+  </style>
+</head>
+<body>
+  <h1>Select Your Candidates</h1>
+
+  <form id="voteForm">
+    <!-- President -->
+    <div class="position">
+      <h2>President</h2>
+      <div class="candidate">
+        <label><input type="radio" name="president" value="Jane Doe - Green Party"> Jane Doe - Green Party</label>
+        <img src="https://via.placeholder.com/50" alt="Jane">
+      </div>
+      <div class="candidate">
+        <label><input type="radio" name="president" value="John Simba - Unity Party"> John Simba - Unity Party</label>
+        <img src="https://via.placeholder.com/50" alt="John">
+      </div>
+      <div class="candidate">
+        <label><input type="radio" name="president" value="Linet Omondi - Jubilee"> Linet Omondi - Jubilee</label>
+        <img src="https://via.placeholder.com/50" alt="Linet">
+      </div>
+    </div>
+
+    <!-- Repeat for Governor, Senator, Women Rep, MP, MCA -->
+    <div class="position">
+      <h2>Governor</h2>
+      <div class="candidate">
+        <label><input type="radio" name="governor" value="Mike Njoroge - ODM"> Mike Njoroge - ODM</label>
+        <img src="https://via.placeholder.com/50" alt="Mike">
+      </div>
+      <div class="candidate">
+        <label><input type="radio" name="governor" value="Agnes Wambui - UDA"> Agnes Wambui - UDA</label>
+        <img src="https://via.placeholder.com/50" alt="Agnes">
+      </div>
+      <div class="candidate">
+        <label><input type="radio" name="governor" value="Kevin Kiptoo - Jubilee"> Kevin Kiptoo - Jubilee</label>
+        <img src="https://via.placeholder.com/50" alt="Kevin">
+      </div>
+    </div>
+
+    <div class="position">
+      <h2>Senator</h2>
+      <div class="candidate">
+        <label><input type="radio" name="senator" value="Mercy Atieno - ODM"> Mercy Atieno - ODM</label>
+        <img src="https://via.placeholder.com/50" alt="Mercy">
+      </div>
+      <div class="candidate">
+        <label><input type="radio" name="senator" value="Daniel Otieno - UDA"> Daniel Otieno - UDA</label>
+        <img src="https://via.placeholder.com/50" alt="Daniel">
+      </div>
+      <div class="candidate">
+        <label><input type="radio" name="senator" value="Susan Mumbi - Jubilee"> Susan Mumbi - Jubilee</label>
+        <img src="https://via.placeholder.com/50" alt="Susan">
+      </div>
+    </div>
+
+    <div class="position">
+      <h2>Women Rep</h2>
+      <div class="candidate">
+        <label><input type="radio" name="womenrep" value="Mary Chebet - Jubilee"> Mary Chebet - Jubilee</label>
+        <img src="https://via.placeholder.com/50" alt="Mary">
+      </div>
+      <div class="candidate">
+        <label><input type="radio" name="womenrep" value="Stacy Mwende - UDA"> Stacy Mwende - UDA</label>
+        <img src="https://via.placeholder.com/50" alt="Stacy">
+      </div>
+      <div class="candidate">
+        <label><input type="radio" name="womenrep" value="Alice Wairimu - ODM"> Alice Wairimu - ODM</label>
+        <img src="https://via.placeholder.com/50" alt="Alice">
+      </div>
+    </div>
+
+    <div class="position">
+      <h2>Member of Parliament (MP)</h2>
+      <div class="candidate">
+        <label><input type="radio" name="mp" value="George Kibe - ODM"> George Kibe - ODM</label>
+        <img src="https://via.placeholder.com/50" alt="George">
+      </div>
+      <div class="candidate">
+        <label><input type="radio" name="mp" value="Simon Kiplangat - UDA"> Simon Kiplangat - UDA</label>
+        <img src="https://via.placeholder.com/50" alt="Simon">
+      </div>
+      <div class="candidate">
+        <label><input type="radio" name="mp" value="Brian Muli - Jubilee"> Brian Muli - Jubilee</label>
+        <img src="https://via.placeholder.com/50" alt="Brian">
+      </div>
+    </div>
+
+    <div class="position">
+      <h2>MCA</h2>
+      <div class="candidate">
+        <label><input type="radio" name="mca" value="Lucy Nduta - ODM"> Lucy Nduta - ODM</label>
+        <img src="https://via.placeholder.com/50" alt="Lucy">
+      </div>
+      <div class="candidate">
+        <label><input type="radio" name="mca" value="Peter Kipkoech - Jubilee"> Peter Kipkoech - Jubilee</label>
+        <img src="https://via.placeholder.com/50" alt="Peter">
+      </div>
+      <div class="candidate">
+        <label><input type="radio" name="mca" value="James Owino - UDA"> James Owino - UDA</label>
+        <img src="https://via.placeholder.com/50" alt="James">
+      </div>
+    </div>
+
+    <br />
+    <input type="text" id="voterId" placeholder="Enter Voter ID" required />
+    <br><br>
+    <button type="submit">Submit Vote</button>
+  </form>
+
+  <!-- Firebase Scripts -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
+    import { getDatabase, ref, set, get, child } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-database.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyA5ia1cFqxamm2exfqb1-pTvGzQFHGKlsQ",
+      authDomain: "johnmunga-2d89b.firebaseapp.com",
+      databaseURL: "https://johnmunga-2d89b-default-rtdb.firebaseio.com",
+      projectId: "johnmunga-2d89b",
+      storageBucket: "johnmunga-2d89b.appspot.com",
+      messagingSenderId: "1036647099803",
+      appId: "1:1036647099803:web:87a204324b19099adc053e"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+
+    document.getElementById("voteForm").addEventListener("submit", async function(e) {
+      e.preventDefault();
+
+      const voterId = document.getElementById("voterId").value.trim();
+
+      if (!voterId) return alert("Voter ID is required!");
+
+      const voteRef = ref(db, "votes/" + voterId);
+      const snapshot = await get(voteRef);
+
+      if (snapshot.exists()) {
+        alert("You have already voted!");
+        return;
+      }
+
+      const formData = new FormData(e.target);
+      const votes = {};
+      formData.forEach((value, key) => {
+        votes[key] = value;
+      });
+
+      await set(voteRef, votes);
+      alert("Vote submitted successfully!");
+      window.location.href = "thankyou.html";
+    });
+  </script>
+</body>
+</html>

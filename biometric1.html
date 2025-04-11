@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Biometric Verification | True Vote</title>
+  <style>
+    body {
+      background: #e0f7ef;
+      font-family: Arial, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 30px;
+    }
+    h1 {
+      color: #007a47;
+    }
+    .card {
+      background: white;
+      padding: 25px;
+      border-radius: 15px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      width: 90%;
+      max-width: 400px;
+      text-align: center;
+    }
+    .btn {
+      background: #01974D;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 10px;
+      margin-top: 10px;
+      cursor: pointer;
+    }
+    .face-scan {
+      margin-top: 20px;
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      border: 3px dashed #01974D;
+      animation: scan 2s infinite alternate;
+    }
+    @keyframes scan {
+      from { box-shadow: 0 0 0px #01974D; }
+      to { box-shadow: 0 0 20px #01974D; }
+    }
+    #passwordField {
+      margin-top: 20px;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+
+<h1>Biometric Verification</h1>
+
+<div class="card">
+  <p>Please verify your identity using Fingerprint or Face Unlock.</p>
+  <div class="face-scan"></div>
+  <button class="btn" onclick="verifyBiometric()">Verify with Biometrics</button>
+  
+  <div id="passwordField">
+    <p>Fallback: Enter your password</p>
+    <input type="password" id="password" placeholder="Enter Password"><br>
+    <button class="btn" onclick="verifyPassword()">Login</button>
+  </div>
+</div>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyA5ia1cFqxamm2exfqb1-pTvGzQFHGKlsQ",
+    authDomain: "johnmunga-2d89b.firebaseapp.com",
+    databaseURL: "https://johnmunga-2d89b-default-rtdb.firebaseio.com",
+    projectId: "johnmunga-2d89b",
+    storageBucket: "johnmunga-2d89b.appspot.com",
+    messagingSenderId: "1036647099803",
+    appId: "1:1036647099803:web:87a204324b19099adc053e"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getDatabase(app);
+
+  async function verifyBiometric() {
+    if (window.PublicKeyCredential) {
+      try {
+        const credential = await navigator.credentials.get({
+          publicKey: {
+            challenge: new Uint8Array(32),
+            allowCredentials: [],
+            timeout: 60000,
+            userVerification: "required"
+          }
+        });
+
+        alert("Biometric Verified!");
+        set(ref(db, 'biometric_verified/user1'), {
+          status: 'success',
+          method: 'biometric'
+        });
+        window.location.href = "location.html";
+      } catch (error) {
+        alert("Biometric failed or unsupported. Try password.");
+        document.getElementById("passwordField").style.display = 'block';
+      }
+    } else {
+      alert("WebAuthn not supported on this browser.");
+      document.getElementById("passwordField").style.display = 'block';
+    }
+  }
+
+  function verifyPassword() {
+    const password = document.getElementById("password").value;
+    if (password === "truevote2027") {
+      alert("Password Verified!");
+      set(ref(db, 'biometric_verified/user1'), {
+        status: 'success',
+        method: 'password'
+      });
+      window.location.href = "location.html";
+    } else {
+      alert("Wrong password.");
+    }
+  }
+</script>
+
+</body>
+</html>

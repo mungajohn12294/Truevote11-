@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Location Selection - True Vote</title>
+  <script type="module">
+    // Firebase Config
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
+    import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyA5ia1cFqxamm2exfqb1-pTvGzQFHGKlsQ",
+      authDomain: "johnmunga-2d89b.firebaseapp.com",
+      databaseURL: "https://johnmunga-2d89b-default-rtdb.firebaseio.com",
+      projectId: "johnmunga-2d89b",
+      storageBucket: "johnmunga-2d89b.appspot.com",
+      messagingSenderId: "1036647099803",
+      appId: "1:1036647099803:web:87a204324b19099adc053e",
+      measurementId: "G-97VVKSQ7ZW"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+
+    window.saveLocation = function () {
+      const county = document.getElementById("county").value;
+      const constituency = document.getElementById("constituency").value;
+      const ward = document.getElementById("ward").value;
+
+      if (county && constituency && ward) {
+        const userLocation = {
+          county,
+          constituency,
+          ward
+        };
+        set(ref(db, 'locations/' + Date.now()), userLocation)
+          .then(() => {
+            alert("Location saved!");
+            window.location.href = "candidate.html";
+          })
+          .catch(error => {
+            alert("Error saving: " + error);
+          });
+      } else {
+        alert("Please select all fields");
+      }
+    };
+  </script>
+  <style>
+    body {
+      background: #f9fefb;
+      font-family: "Segoe UI", sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+    }
+
+    .box {
+      background: white;
+      padding: 30px;
+      border-radius: 20px;
+      box-shadow: 0 0 20px rgba(0, 100, 0, 0.2);
+      width: 90%;
+      max-width: 500px;
+    }
+
+    h2 {
+      color: #2e7d32;
+      text-align: center;
+    }
+
+    select, button {
+      width: 100%;
+      padding: 12px;
+      margin-top: 20px;
+      border: 2px solid #2e7d32;
+      border-radius: 10px;
+      font-size: 16px;
+    }
+
+    button {
+      background: #2e7d32;
+      color: white;
+      font-weight: bold;
+      transition: 0.3s;
+    }
+
+    button:hover {
+      background: #1b5e20;
+    }
+  </style>
+</head>
+<body>
+  <div class="box">
+    <h2>Select Your Location</h2>
+
+    <select id="county" onchange="loadConstituencies()">
+      <option value="">-- Select County --</option>
+      <option value="Central">Central</option>
+      <option value="Nairobi">Nairobi</option>
+      <option value="Coast">Coast</option>
+      <option value="Rift Valley">Rift Valley</option>
+      <option value="Western">Western</option>
+      <option value="Eastern">Eastern</option>
+      <option value="Nyanza">Nyanza</option>
+      <option value="North Eastern">North Eastern</option>
+    </select>
+
+    <select id="constituency" onchange="loadWards()">
+      <option value="">-- Select Constituency --</option>
+    </select>
+
+    <select id="ward">
+      <option value="">-- Select Ward --</option>
+    </select>
+
+    <button onclick="saveLocation()">Continue</button>
+  </div>
+
+  <script>
+    const centralConstituencies = {
+      "Kiambu": ["Githunguri", "Juja", "Limuru", "Ruiru", "Thika Town"],
+      "Murang'a": ["Kiharu", "Kangema", "Mathioya", "Kandara", "Maragua"],
+      "Nyeri": ["Nyeri Town", "Tetu", "Kieni", "Othaya", "Mathira"]
+    };
+
+    const centralWards = {
+      "Githunguri": ["Githiga", "Komothai", "Ikinu", "Githunguri", "Kambiri"],
+      "Juja": ["Kalimoni", "Witeithie", "Murera", "Theta"],
+      "Limuru": ["Ndeiya", "Bibirioni", "Limuru East", "Limuru Central"],
+      "Ruiru": ["Mwiki", "Kahawa Sukari", "Gatongora", "Gitothua"],
+      "Thika Town": ["Township", "Kamenu", "Hospital", "Gatuanyaga"],
+
+      "Kiharu": ["Mugoiri", "Gaturi", "Murarandia", "Kimathi"],
+      "Kangema": ["Marania", "Kanyenyaini", "Rwanyaga"],
+      "Mathioya": ["Gatanga", "Njumbi", "Kamacharia"],
+      "Kandara": ["Ithiru", "Muruka", "Ng’araria"],
+      "Maragua": ["Makuyu", "Kahuro", "Kambiti"],
+
+      "Nyeri Town": ["Kamakwa", "Ruring'u", "Gatitu"],
+      "Tetu": ["Chinga", "Dedan Kimathi", "Endarasha"],
+      "Kieni": ["Mwiyogo", "Gatarakwa", "Naromoru"],
+      "Othaya": ["Karima", "Mahiga", "Iriani"],
+      "Mathira": ["Karatina", "Magutu", "Ragati"]
+    };
+
+    function loadConstituencies() {
+      const county = document.getElementById("county").value;
+      const constituencySelect = document.getElementById("constituency");
+      constituencySelect.innerHTML = '<option value="">-- Select Constituency --</option>';
+
+      if (county === "Central") {
+        for (const cons in centralConstituencies) {
+          centralConstituencies[cons].forEach(c => {
+            let opt = document.createElement("option");
+            opt.value = c;
+            opt.textContent = c;
+            constituencySelect.appendChild(opt);
+          });
+        }
+      }
+    }
+
+    function loadWards() {
+      const constituency = document.getElementById("constituency").value;
+      const wardSelect = document.getElementById("ward");
+      wardSelect.innerHTML = '<option value="">-- Select Ward --</option>';
+
+      if (centralWards[constituency]) {
+        centralWards[constituency].forEach(w => {
+          let opt = document.createElement("option");
+          opt.value = w;
+          opt.textContent = w;
+          wardSelect.appendChild(opt);
+        });
+      }
+    }
+  </script>
+</body>
+</html>

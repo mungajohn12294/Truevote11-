@@ -1,0 +1,104 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>OTP Verification - True Vote</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    body {
+      background: #e3f2fd;
+      font-family: 'Segoe UI', sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .otp-box {
+      background: white;
+      padding: 40px;
+      border-radius: 15px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.1);
+      width: 90%;
+      max-width: 400px;
+    }
+
+    .otp-box h2 {
+      margin-bottom: 20px;
+    }
+
+    input {
+      width: 100%;
+      padding: 10px;
+      margin: 15px 0;
+      font-size: 18px;
+      border: 2px solid #2196f3;
+      border-radius: 8px;
+      outline: none;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      font-size: 16px;
+      background: #2196f3;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #1976d2;
+    }
+
+    .info {
+      font-size: 14px;
+      color: #555;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="otp-box">
+    <h2>Enter OTP</h2>
+    <p class="info">We sent a 4-digit code to your phone.</p>
+    <input type="tel" id="otpInput" placeholder="Enter OTP">
+    <button onclick="verifyOTP()">Verify</button>
+  </div>
+
+  <!-- Firebase SDK -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
+    import { getDatabase, ref, get, update } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyA5ia1cFqxamm2exfqb1-pTvGzQFHGKlsQ",
+      authDomain: "johnmunga-2d89b.firebaseapp.com",
+      databaseURL: "https://johnmunga-2d89b-default-rtdb.firebaseio.com",
+      projectId: "johnmunga-2d89b",
+      storageBucket: "johnmunga-2d89b.firebasestorage.app",
+      messagingSenderId: "1036647099803",
+      appId: "1:1036647099803:web:87a204324b19099adc053e"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+
+    // Simulated OTP (for now)
+    const expectedOTP = "1234";
+    const expectedOPT = "5555";
+
+    window.verifyOTP = async function () {
+      const otp = document.getElementById("otpInput").value.trim();
+      if (otp === expectedOTP) {
+        alert("OTP Verified!");
+        window.location.href = "biometric.html"; // next page
+      } else {
+        alert("Invalid OTP. Please try again.");
+      }
+    };
+  </script>
+</body>
+</html>

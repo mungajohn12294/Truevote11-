@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Thank You - True Vote</title>
+  <link rel="stylesheet" href="css/style.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
+  <!-- Firebase -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
+    import { getDatabase, ref, set, push } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyA5ia1cFqxamm2exfqb1-pTvGzQFHGKlsQ",
+      authDomain: "johnmunga-2d89b.firebaseapp.com",
+      databaseURL: "https://johnmunga-2d89b-default-rtdb.firebaseio.com",
+      projectId: "johnmunga-2d89b",
+      storageBucket: "johnmunga-2d89b.appspot.com",
+      messagingSenderId: "1036647099803",
+      appId: "1:1036647099803:web:87a204324b19099adc053e",
+      measurementId: "G-97VVKSQ7ZW"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase();
+
+    window.saveToFirebase = function(data, hash) {
+      const timestamp = Date.now();
+      set(ref(db, "votes/" + timestamp), {
+        ...data,
+        hash,
+        timestamp
+      });
+    };
+
+    window.submitFeedback = function () {
+      const email = document.getElementById("email").value;
+      const phone = document.getElementById("phone").value;
+      const comment = document.getElementById("comment").value;
+      if (email || phone || comment) {
+        push(ref(db, "feedback/"), {
+          email, phone, comment,
+          submittedAt: Date.now()
+        }).then(() => {
+          alert("Feedback submitted successfully.");
+          document.getElementById("feedback-form").reset();
+        });
+      }
+    };
+  </script>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f2fef3;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: auto;
+      padding: 40px;
+    }
+    .thank-you-card {
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.1);
+      max-width: 650px;
+      width: 100%;
+      padding: 40px;
+      text-align: center;
+    }
+    .thank-you-card h1 {
+      font-size: 2em;
+      color: green;
+    }
+    .thank-you-card p {
+      font-size: 1.1em;
+      margin-top: 15px;
+      color: #444;
+    }
+    .overview, .blockchain, .feedback {
+      text-align: left;
+      margin-top: 25px;
+      background: #e9f5ee;
+      padding: 20px;
+      border-radius: 12px;
+    }
+    .overview ul {
+      list-style: none;
+      padding: 0;
+    }
+    .overview li {
+      margin-bottom: 8px;
+    }
+    #qrcode {
+      margin-top: 15px;
+    }
+    input, textarea {
+      width: 100%;
+      padding: 10px;
+      margin-top: 10px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      font-size: 1em;
+    }
+    button {
+      margin-top: 15px;
+      background: green;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      font-size: 1em;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    button:hover {
+      background: darkgreen;
+    }
+  </style>
+</head>
+<body>
+  <div class="thank-you-card">
+    <h1>Thank You for Voting!</h1>
+    <p>Your vote has been securely submitted and recorded.</p>
+
+    <div class="overview">
+      <h3>Overview of Your Vote</h3>
+      <ul id="vote-summary"></ul>
+    </div>
+
+    <div class="blockchain">
+      <h3>Blockchain Hash</h3>
+      <p id="hash">Generating...</p>
+      <canvas id="qrcode"></canvas>
+    </div>
+
+    <div class="feedback">
+      <h3>Leave Feedback or Reach Us</h3>
+      <form id="feedback-form" onsubmit="event.preventDefault(); submitFeedback();">
+        <input type="email" id="email" placeholder="Your Email (optional)">
+        <input type="tel" id="phone" placeholder="Your Phone Number (optional)">
+        <textarea id="comment" rows="4" placeholder="Your Comment or Message"></textarea>
+        <button type="submit">Submit Feedback</button>
+      </form>
+    </div>
+
+    <p style="margin-top: 30px;">We appreciate your participation in strengthening democracy.</p>
+  </div>
+
+  <script>
+    const votes = JSON.parse(localStorage.getItem("truevote-selections")) || {
+      President: "Jane Doe",
+      Governor: "John Mwangi",
+      Senator: "Grace Wambui",
+      MP: "Samuel Kiprotich",
+      MCA: "Alice Njeri"
+    };
+
+    const summary = document.getElementById("vote-summary");
+    let voteText = "";
+    for (const position in votes) {
+      const li = document.createElement("li");
+      li.innerHTML = `<strong>${position}:</strong> ${votes[position]}`;
+      summary.appendChild(li);
+      voteText += `${position}:${votes[position]};`;
+    }
+
+    const hash = CryptoJS.SHA256(voteText + Date.now()).toString();
+    document.getElementById("hash").textContent = hash;
+
+    QRCode.toCanvas(document.getElementById("qrcode"), hash, function (error) {
+      if (error) console.error(error);
+    });
+
+    if (typeof saveToFirebase === "function") {
+      saveToFirebase(votes, hash);
+    }
+  </script>
+</body>
+</html>

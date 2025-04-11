@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>True Vote - Authentication</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    body {
+      background-color: #e8f5e9;
+      font-family: 'Segoe UI', sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .form-box {
+      background: white;
+      padding: 40px;
+      border-radius: 20px;
+      box-shadow: 0 0 30px rgba(0, 0, 0, 0.2);
+      width: 90%;
+      max-width: 400px;
+    }
+
+    .form-group {
+      position: relative;
+      margin-bottom: 30px;
+    }
+
+    .form-group input {
+      width: 100%;
+      padding: 10px 10px 10px 10px;
+      background: transparent;
+      border: none;
+      border-bottom: 2px solid #01974D;
+      outline: none;
+      font-size: 16px;
+    }
+
+    .form-group label {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      color: #777;
+      pointer-events: none;
+      transition: 0.2s;
+    }
+
+    .form-group input:focus ~ label,
+    .form-group input:valid ~ label {
+      top: -10px;
+      font-size: 12px;
+      color: #01974D;
+    }
+
+    button {
+      width: 100%;
+      background-color: #01974D;
+      color: white;
+      border: none;
+      padding: 12px;
+      border-radius: 10px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #017c3e;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="form-box">
+    <h2>Authenticate Voter</h2>
+    <div class="form-group">
+      <input type="tel" id="idNumber" required>
+      <label>ID Number</label>
+    </div>
+    <div class="form-group">
+      <input type="tel" id="voterNumber" required>
+      <label>Voter Number</label>
+    </div>
+    <div class="form-group">
+      <input type="tel" id="phoneNumber" required>
+      <label>Phone Number</label>
+    </div>
+    <button onclick="authenticateVoter()">Submit</button>
+  </div>
+
+  <!-- Firebase SDK -->
+  <script type="module">
+    // Firebase config
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
+    import { getDatabase, ref, set, get, child } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyA5ia1cFqxamm2exfqb1-pTvGzQFHGKlsQ",
+      authDomain: "johnmunga-2d89b.firebaseapp.com",
+      databaseURL: "https://johnmunga-2d89b-default-rtdb.firebaseio.com",
+      projectId: "johnmunga-2d89b",
+      storageBucket: "johnmunga-2d89b.firebasestorage.app",
+      messagingSenderId: "1036647099803",
+      appId: "1:1036647099803:web:87a204324b19099adc053e"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+
+    window.authenticateVoter = async function () {
+      const id = document.getElementById('idNumber').value.trim();
+      const voter = document.getElementById('voterNumber').value.trim();
+      const phone = document.getElementById('phoneNumber').value.trim();
+
+      if (!id || !voter || !phone) {
+        alert("Please fill in all fields!");
+        return;
+      }
+
+      const dbRef = ref(db);
+      const key = `voters/${id}_${phone}`;
+
+      try {
+        const snapshot = await get(child(dbRef, key));
+        if (snapshot.exists()) {
+          alert("You have already authenticated or voted.");
+        } else {
+          await set(ref(db, key), {
+            idNumber: id,
+            voterNumber: voter,
+            phoneNumber: phone,
+            voted: false
+          });
+          alert("Authentication successful! Proceeding to OTP...");
+          window.location.href = "john.html";
+        }
+      } catch (error) {
+        console.error("Error checking Firebase:", error);
+        alert("Something went wrong.");
+      }
+    };
+  </script>
+
+</body>
+</html>

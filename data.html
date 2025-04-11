@@ -1,0 +1,85 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Candidate Vote Analysis</title>
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
+        import { getDatabase, ref, get, child } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js";
+
+        // Firebase Config
+    const firebaseConfig = {
+      apiKey: "AIzaSyA5ia1cFqxamm2exfqb1-pTvGzQFHGKlsQ",
+      authDomain: "johnmunga-2d89b.firebaseapp.com",
+      databaseURL: "https://johnmunga-2d89b-default-rtdb.firebaseio.com",
+      projectId: "johnmunga-2d89b",
+      storageBucket: "johnmunga-2d89b.firebasestorage.app",
+      messagingSenderId: "1036647099803",
+      appId: "1:1036647099803:web:87a204324b19099adc053e""
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        async function fetchVotes() {
+            const dbRef = ref(db);
+            const snapshot = await get(child(dbRef, `votes`));
+
+            if (!snapshot.exists()) {
+                document.getElementById("voteData").innerHTML = "No votes recorded yet.";
+                return;
+            }
+
+            const allVotes = snapshot.val();
+            const tally = {};
+
+            // Count votes per candidate per position
+            for (let voter in allVotes) {
+                const ballot = allVotes[voter];
+                for (let position in ballot) {
+                    const candidate = ballot[position];
+                    if (!tally[position]) tally[position] = {};
+                    if (!tally[position][candidate]) tally[position][candidate] = 0;
+                    tally[position][candidate]++;
+                }
+            }
+
+            displayResults(tally);
+        }
+
+        function displayResults(tally) {
+            const voteDiv = document.getElementById("voteData");
+            voteDiv.innerHTML = "";
+
+            for (let position in tally) {
+                const positionResults = tally[position];
+                const totalVotes = Object.values(positionResults).reduce((a, b) => a + b, 0);
+
+                const container = document.createElement("div");
+                container.innerHTML = `<h2>${position}</h2>`;
+                
+                for (let candidate in positionResults) {
+                    const votes = positionResults[candidate];
+                    const percent = ((votes / totalVotes) * 100).toFixed(1);
+
+                    const bar = `
+                        <div style="background:#ddd; border-radius:10px; margin:5px 0;">
+                            <div style="background:#4CAF50; width:${percent}%; padding:8px; color:white; border-radius:10px;">
+                                ${candidate}: ${votes} votes (${percent}%)
+                            </div>
+                        </div>
+                    `;
+                    container.innerHTML += bar;
+                }
+                voteDiv.appendChild(container);
+            }
+        }
+
+        window.onload = fetchVotes;
+    </script>
+</head>
+<body style="padding: 30px; font-family: sans-serif;">
+    <h1>Candidate Vote Analysis</h1>
+    <div id="voteData">Loading...</div>
+</body>
+</html>

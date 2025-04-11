@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Admin Dashboard - True Vote</title>
+  <link rel="stylesheet" href="css/style.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script type="module" src="firebase.js"></script>
+  <script type="module" src="results.js" defer></script>
+</head>
+<body>
+  <header>
+    <h1>True Vote Admin Dashboard</h1>
+    <p>Secure Results Monitoring</p>
+  </header>
+
+  <section id="admin-auth">
+    <input type="password" id="admin-password" placeholder="Enter Admin Password"/>
+    <button onclick="verifyAdmin()">Login</button>
+  </section>
+
+  <section id="dashboard" style="display: none;">
+    <div class="filters">
+      <select id="filter-county" onchange="filterData()"> 
+        <option value="All">All Counties</option>
+        <!-- Add counties dynamically -->
+      </select>
+    </div>
+
+    <div id="charts">
+      <canvas id="presidentChart"></canvas>
+      <canvas id="governorChart"></canvas>
+      <canvas id="senatorChart"></canvas>
+      <canvas id="womenRepChart"></canvas>
+      <canvas id="mpChart"></canvas>
+      <canvas id="mcaChart"></canvas>
+    </div>
+  </section>
+
+</body>
+</html>
